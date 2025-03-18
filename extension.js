@@ -39,7 +39,7 @@ function activate(context) {
         }
 
         // 커서 위치 기준으로 올바른 sid="..." 감지
-        const pattern = /sid="([^"]*)"/g;
+        const pattern = /sid=["|']([^"]*)["|']/g;
         let match;
         let closestMatch = null;
 
