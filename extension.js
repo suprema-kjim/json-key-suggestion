@@ -63,7 +63,7 @@ function activate(context) {
 
         // 입력 텍스트를 기준으로 JSON value 검색
         const matchingItems = Object.entries(jsonData)
-            .filter(([key, value]) => value.includes(inputText)) // value에 입력 텍스트가 포함된 경우
+            .filter(([key, value]) => value === inputText) // value가 inputText와 100% 일치하는 경우
             .map(([key, value]) => ({
                 label: value,
                 detail: `${key}`,
