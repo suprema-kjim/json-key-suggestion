@@ -83,7 +83,43 @@ function activate(context) {
         });
     });
 
-    context.subscriptions.push(disposable);
+    // 새로운 명령 등록
+    const queryCodeDisposable = vscode.commands.registerCommand('jsonKeySuggestion.querycode', async () => {
+        const jsonFilePath = getJsonFilePath();
+        let jsonData;
+        try {
+            jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
+        } catch (error) {
+            vscode.window.showErrorMessage(`JSON 파일을 읽는 중 오류가 발생했습니다: ${error.message}`);
+            return;
+        }
+
+        const input = await vscode.window.showInputBox({
+            placeHolder: '검색할 문자열을 입력하세요.',
+        });
+
+        if (!input) {
+            return;
+        }
+
+        const matchingItems = Object.entries(jsonData)
+            .filter(([key, value]) => value === input) // value가 input과 일치하는 경우
+            .map(([key, value]) => ({
+                label: value,
+                detail: `${key}`,
+            }));
+
+        vscode.window.showQuickPick(matchingItems, {
+            placeHolder: 'JSON Value를 선택하세요.',
+        }).then((selectedItem) => {
+            if (selectedItem) {
+                vscode.env.clipboard.writeText(selectedItem.detail);
+                vscode.window.showInformationMessage(`선택된 항목이 클립보드에 복사되었습니다: ${selectedItem.detail}`);
+            }
+        });
+    });
+
+    context.subscriptions.push(disposable, queryCodeDisposable);
 }
 
 function deactivate() {}

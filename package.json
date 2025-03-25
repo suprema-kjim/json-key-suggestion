@@ -2,7 +2,7 @@
   "name": "json-key-suggestion",
   "displayName": "json-key-suggestion",
   "description": "JSON key auto complete extension",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "engines": {
     "vscode": "^1.91.0"
   },
@@ -10,10 +10,22 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:mdx"
+    "onLanguage:mdx",
+    "onCommand:jsonKeySuggestion.triggerCompletion",
+    "onCommand:jsonKeySuggestion.querycode"
   ],
   "main": "./extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "jsonKeySuggestion.triggerCompletion",
+        "title": "Trigger JSON Key Suggestion"
+      },
+      {
+        "command": "jsonKeySuggestion.querycode",
+        "title": "Query JSON Code"
+      }
+    ],
     "configuration": {
       "title": "JSON Key Suggestion Settings",
       "properties": {
@@ -22,9 +34,7 @@
           "default": "",
           "description": "JSON 파일 경로를 설정합니다. 절대 경로나 워크스페이스 상대 경로를 사용할 수 있습니다."
         }
-      }
-    },
-    "contributes": {
+      },
       "languages": [
         {
           "id": "mdx",
@@ -46,12 +56,6 @@
             ".md"
           ]
         }
-      ],
-      "commands": [
-        {
-          "command": "jsonKeySuggestion.triggerCompletion",
-          "title": "Trigger JSON Key Suggestion"
-        }
       ]
     },
     "activationEvents": [
@@ -62,7 +66,8 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "yarn run lint",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
