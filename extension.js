@@ -1,6 +1,18 @@
 const vscode = require('vscode');
 const fs = require('fs');
 const path = require('path');
+const translatte = require('translatte');
+const slugify = require('slugify');
+
+async function translateKoreanToEnglish(text) {
+    try {
+        const result = await translatte(text, { from: 'ko', to: 'en' });
+        return result.text;
+    } catch (error) {
+        vscode.window.showErrorMessage(`번역 중 오류 발생: ${error.message}`);
+        return text;
+    }
+}
 
 function activate(context) {
     // 사용자 설정에서 JSON 파일 경로를 읽음
@@ -119,7 +131,49 @@ function activate(context) {
         });
     });
 
-    context.subscriptions.push(disposable, queryCodeDisposable);
+    // MDX 헤딩에 hash id를 추가하는 명령 등록 예시
+    const addHashIdDisposable = vscode.commands.registerCommand('jsonKeySuggestion.addHashIdToMdxHeadings', async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            return;
+        }
+        const document = editor.document;
+        if (document.languageId !== 'mdx' && path.extname(document.fileName) !== '.mdx') {
+            vscode.window.showInformationMessage('활성 파일은 MDX 파일이 아닙니다.');
+            return;
+        }
+
+        const edit = new vscode.WorkspaceEdit();
+        for (let i = 0; i < document.lineCount; i++) {
+            const line = document.lineAt(i);
+            const text = line.text;
+            const regex = /^(#+)(\s+)(.*?)(\s*\{#.+\})?\s*$/;
+            const match = regex.exec(text);
+            if (match) {
+                if (match[4]) continue;
+                
+                const headerMarker = match[1];
+                const spacing = match[2];
+                let headerText = match[3].trim();
+                
+                // 한글 헤딩 텍스트를 영어로 번역 후 slug 생성
+                const translatedHeader = await translateKoreanToEnglish(headerText);
+                let slug = slugify(translatedHeader, { lower: true });
+                
+                const newText = `${headerMarker}${spacing}${headerText} {#${slug}}`;
+                edit.replace(document.uri, line.range, newText);
+            }
+        }
+
+        if (edit.size > 0) {
+            await vscode.workspace.applyEdit(edit);
+            vscode.window.showInformationMessage('MDX 파일 헤딩에 hash id가 추가되었습니다.');
+        } else {
+            vscode.window.showInformationMessage('추가할 헤딩이 없습니다.');
+        }
+    });
+
+    context.subscriptions.push(disposable, queryCodeDisposable, addHashIdDisposable);
 }
 
 function deactivate() {}

@@ -2,7 +2,7 @@
   "name": "json-key-suggestion",
   "displayName": "json-key-suggestion",
   "description": "JSON key auto complete extension",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "engines": {
     "vscode": "^1.91.0"
   },
@@ -24,6 +24,10 @@
       {
         "command": "jsonKeySuggestion.querycode",
         "title": "Query JSON Code"
+      },
+      {
+        "command": "jsonKeySuggestion.addHashIdToMdxHeadings",
+        "title": "Add Hash ID to MDX Headings"
       }
     ],
     "configuration": {
@@ -78,7 +82,10 @@
     "eslint": "^9.16.0"
   },
   "dependencies": {
+    "@vitalets/google-translate-api": "^9.2.1",
     "@vscode/vsce": "^2.32.0",
+    "slugify": "^1.6.6",
+    "translatte": "^3.0.1",
     "xml2js": "^0.4.23"
   }
 }
