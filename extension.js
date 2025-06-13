@@ -51,7 +51,7 @@ function activate(context) {
         }
 
         // 커서 위치 기준으로 올바른 sid="..." 감지
-        const pattern = /sid=["|']([^"]*)["|']/g;
+        const pattern = /sid=["|']([^"]*?)["|']/g;
         let match;
         let closestMatch = null;
 
@@ -72,6 +72,7 @@ function activate(context) {
         }
 
         const inputText = closestMatch; // 올바르게 감지된 sid="..." 내부 텍스트
+        console.log(`Detected input text: ${inputText}`);
 
         // 입력 텍스트를 기준으로 JSON value 검색
         const matchingItems = Object.entries(jsonData)
