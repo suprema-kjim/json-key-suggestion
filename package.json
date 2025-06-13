@@ -3,7 +3,7 @@
   "displayName": "json-key-suggestion",
   "description": "JSON key auto complete extension",
   "repository": "https://github.com/suprema-kjim/json-key-suggestion.git",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "engines": {
     "vscode": "^1.91.0"
   },
